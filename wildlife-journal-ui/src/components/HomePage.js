@@ -11,15 +11,19 @@ const HomePage = () => {
   const [searchText, setSearchText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSearchButtonEnabled, setIsSearchButtonEnabled] = useState(false);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    size: 10,
+  });
 
   useEffect(() => {
     fetchLatestJournals();
-  }, []);
+  }, [pagination]);
 
   const fetchLatestJournals = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/journals?page=1&size=10"
+        `http://localhost:8000/journals?page=${pagination.page}&size=${pagination.size}`
       );
       const data = await response.json();
       setLatestJournals(data);
@@ -74,6 +78,13 @@ const HomePage = () => {
     setIsSearchButtonEnabled(false);
   };
 
+  const handlePageChange = (page) => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      page: page,
+    }));
+  };
+
   return (
     <div className="container py-4">
       <Navbar />
@@ -110,6 +121,35 @@ const HomePage = () => {
                 onJournalClick={handleJournalClick}
                 formatDate={formatDate}
               />
+              {latestJournals.length > 0 && (
+                <nav aria-label="Latest Journals Pagination" className="mt-4">
+                  <ul className="pagination justify-content-center">
+                    <li
+                      className={`page-item ${
+                        pagination.page === 1 ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pagination.page - 1)}
+                      >
+                        Previous
+                      </button>
+                    </li>
+                    <li className="page-item active">
+                      <span className="page-link">{pagination.page}</span>
+                    </li>
+                    <li className="page-item">
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pagination.page + 1)}
+                      >
+                        Next
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
+              )}
             </div>
           ) : null}
         </div>
