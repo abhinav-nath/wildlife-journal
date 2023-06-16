@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 import csv
+import json
 from typing import List, Dict
 
 from pydantic import BaseModel
@@ -23,8 +24,11 @@ def read_journals():
     with open(CSV_FILE, "r") as file:
         reader = csv.DictReader(file)
         journals = list(reader)
-    
-    print(journals)
+
+    # Parse species_observed as a JSON object
+    for journal in journals:
+        journal["species_observed"] = json.loads(journal["species_observed"])
+
     return journals
 
 
