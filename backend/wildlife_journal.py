@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 import csv
 from typing import List, Dict
 
@@ -38,6 +39,22 @@ def write_journals(journals):
 
 # Create FastAPI instance
 app = FastAPI()
+
+
+# Configure CORS
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    # Add more allowed origins if needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Get all journals with pagination
