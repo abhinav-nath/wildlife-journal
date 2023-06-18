@@ -135,8 +135,9 @@ def update_journal(journal_id: int, updated_journal: JournalUpdate):
     return journal
 
 
-@app.delete("/journals/{journal_id}")
-def delete_journal(journal_id: Optional[int] = None):
+@app.delete("/journals")
+def delete_journal(journal_id: Optional[int] = Query(None, title="Journal ID")):
+    print("inside delete_journal endpoint")
     db = SessionLocal()
 
     if journal_id is not None:
@@ -155,7 +156,7 @@ def delete_journal(journal_id: Optional[int] = None):
     return {"message": "Journal(s) deleted successfully"}
 
 
-@app.get("/journals/export")
+@app.get("/export")
 def export_to_csv():
     db = SessionLocal()
     journals = db.query(Journal).all()
