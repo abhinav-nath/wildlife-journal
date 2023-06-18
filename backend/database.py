@@ -21,7 +21,7 @@ class Journal(Base):
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
-    create_dummy_journals()
+    # create_dummy_journals()
 
 
 def create_dummy_journals():
@@ -31,32 +31,7 @@ def create_dummy_journals():
             "place": "Park",
             "species_observed": {"purple sunbird": 2, "squirrel": 3},
             "notes": "A beautiful day at the park.",
-        },
-        {
-            "date": "2023-06-13",
-            "place": "Beach",
-            "species_observed": {"seagull": 5, "crab": 2},
-            "notes": "Enjoyed a sunny day at the beach.",
-        },
-        {
-            "date": "2023-06-14",
-            "place": "Forest",
-            "species_observed": {"deer": 3, "rabbit": 4, "fox": 1},
-            "notes": "Explored the forest trails.",
-        },
-        # Add more dummy journals here
-        {
-            "date": "2023-06-20",
-            "place": "Garden",
-            "species_observed": {"butterfly": 10, "bee": 7},
-            "notes": "Spent time in the beautiful garden.",
-        },
-        {
-            "date": "2023-06-21",
-            "place": "Mountain",
-            "species_observed": {"eagle": 2, "mountain goat": 3},
-            "notes": "Reached the summit of the mountain.",
-        },
+        }
         # Add more dummy journals here
     ]
 
