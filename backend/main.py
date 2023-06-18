@@ -1,6 +1,8 @@
-from sqlalchemy import or_
+import os
+import csv
 import json
-from fastapi import FastAPI, HTTPException, Query
+from sqlalchemy import or_
+from fastapi import FastAPI, HTTPException, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
@@ -43,19 +45,51 @@ class JournalUpdate(BaseModel):
 
 
 @app.get("/journals")
-def get_all_journals(page: int = Query(1, gt=0), size: int = Query(10, gt=0, le=100)):
+def get_journals(page: int = Query(1, gt=0), size: int = Query(10, gt=0, le=100), search_text: Optional[str] = Query(None, alias="search_text")):
+    print("inside get_journals endpoint")
     db = SessionLocal()
     start_index = (page - 1) * size
     end_index = start_index + size
 
-    journals = db.query(Journal).offset(start_index).limit(size).all()
+    if search_text:
+        matching_journals = (
+            db.query(Journal)
+            .filter(
+                or_(
+                    func.lower(Journal.place).like(f"%{search_text}%"),
+                    func.lower(Journal.notes).like(f"%{search_text}%"),
+                    func.lower(Journal.species_observed).like(
+                        f"%{search_text}%"),
+                )
+            )
+            .offset(start_index)
+            .limit(size)
+            .all()
+        )
+        total_count = (
+            db.query(func.count(Journal.id))
+            .filter(
+                or_(
+                    func.lower(Journal.place).like(f"%{search_text}%"),
+                    func.lower(Journal.notes).like(f"%{search_text}%"),
+                    func.lower(Journal.species_observed).like(
+                        f"%{search_text}%"),
+                )
+            )
+            .scalar()
+        )
+    else:
+        matching_journals = db.query(Journal).offset(
+            start_index).limit(size).all()
+        total_count = db.query(func.count(Journal.id)).scalar()
+
     db.close()
 
-    return journals
+    return {"journals": matching_journals, "totalCount": total_count}
 
 
-@app.get("/journals")
-def get_journal(journal_id: int = Query(..., alias="journal_id")):
+@app.get("/journals/{journal_id}")
+def get_journal(journal_id: int = Path(..., title="Journal ID")):
     print("inside get_journal endpoint")
     db = SessionLocal()
     journal = db.query(Journal).filter(Journal.id == journal_id).first()
@@ -65,28 +99,6 @@ def get_journal(journal_id: int = Query(..., alias="journal_id")):
         raise HTTPException(status_code=404, detail="Journal not found")
 
     return journal
-
-
-@app.get("/journals/search")
-def search_journals(search_text: str = Query(..., alias="search_text")):
-    db = SessionLocal()
-    search_text = search_text.lower()
-
-    matching_journals = (
-        db.query(Journal)
-        .filter(
-            or_(
-                func.lower(Journal.place).like(f"%{search_text}%"),
-                func.lower(Journal.notes).like(f"%{search_text}%"),
-                func.lower(Journal.species_observed).like(f"%{search_text}%"),
-            )
-        )
-        .all()
-    )
-
-    db.close()
-
-    return matching_journals
 
 
 @app.post("/journals")
@@ -124,15 +136,46 @@ def update_journal(journal_id: int, updated_journal: JournalUpdate):
 
 
 @app.delete("/journals/{journal_id}")
-def delete_journal(journal_id: int):
+def delete_journal(journal_id: Optional[int] = None):
     db = SessionLocal()
-    journal = db.query(Journal).filter(Journal.id == journal_id).first()
 
-    if not journal:
-        raise HTTPException(status_code=404, detail="Journal not found")
+    if journal_id is not None:
+        journal = db.query(Journal).filter(Journal.id == journal_id).first()
 
-    db.delete(journal)
+        if not journal:
+            raise HTTPException(status_code=404, detail="Journal not found")
+
+        db.delete(journal)
+    else:
+        db.query(Journal).delete()
+
     db.commit()
     db.close()
 
-    return {"message": "Journal deleted successfully"}
+    return {"message": "Journal(s) deleted successfully"}
+
+
+@app.get("/journals/export")
+def export_to_csv():
+    db = SessionLocal()
+    journals = db.query(Journal).all()
+    db.close()
+
+    # Define the CSV file path
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, "wildlife_journals.csv")
+
+    # Write records to the CSV file
+    with open(file_path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["id", "date", "place", "species_observed", "notes"])
+        for journal in journals:
+            writer.writerow([
+                journal.id,
+                journal.date,
+                journal.place,
+                json.dumps(journal.species_observed),
+                journal.notes,
+            ])
+
+    return {"message": f"Exported all records to {file_path}"}
