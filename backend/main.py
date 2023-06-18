@@ -156,6 +156,47 @@ def delete_journal(journal_id: Optional[int] = Query(None, title="Journal ID")):
     return {"message": "Journal(s) deleted successfully"}
 
 
+@app.post("/import")
+def import_from_csv():
+    db = SessionLocal()
+
+    # Define the CSV file path
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, "wildlife_journals.csv")
+
+    # Check if the CSV file exists
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="CSV file not found")
+
+    # Read records from the CSV file and validate the format
+    with open(file_path, mode="r") as file:
+        reader = csv.DictReader(file)
+        journals = []
+        for row in reader:
+            try:
+                journal = Journal(
+                    id=int(row["id"]),
+                    date=row["date"],
+                    place=row["place"],
+                    species_observed=json.loads(row["species_observed"]),
+                    notes=row["notes"]
+                )
+                journals.append(journal)
+            except (KeyError, ValueError):
+                raise HTTPException(
+                    status_code=400, detail="Invalid CSV format")
+
+    # Delete all existing records from the database
+    db.query(Journal).delete()
+
+    # Insert new records into the database
+    db.bulk_save_objects(journals)
+    db.commit()
+    db.close()
+
+    return {"message": f"Imported {len(journals)} records from {file_path}"}
+
+
 @app.get("/export")
 def export_to_csv():
     db = SessionLocal()
