@@ -15,20 +15,27 @@ const HomePage = () => {
   const [pagination, setPagination] = useState({
     page: 1,
     size: 10,
+    totalPages: 0, // Added totalPages state
   });
 
   useEffect(() => {
-    fetchLatestJournals();
-  }, [pagination]);
+    fetchLatestJournals(pagination.page); // Pass the page value here
+  }, [pagination.page, pagination.size]); // Include pagination.page as a dependency
 
-  const fetchLatestJournals = async () => {
+  const fetchLatestJournals = async (page) => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/journals?page=${pagination.page}&size=${pagination.size}`
-      );
+      const url = `http://localhost:8000/journals?page=${page}&size=${pagination.size}`;
+      if (searchText) {
+        url += `&search_text=${searchText}`;
+      }
+      const response = await fetch(url);
       const data = await response.json();
-      setLatestJournals(data);
+      setLatestJournals(data.journals);
       setLoading(false);
+      setPagination((prevPagination) => ({
+        ...prevPagination,
+        totalPages: Math.ceil(data.totalCount / prevPagination.size),
+      }));
     } catch (error) {
       console.log("Error fetching latest journals:", error);
     }
@@ -38,6 +45,11 @@ const HomePage = () => {
     const value = e.target.value;
     setSearchText(value);
     setIsSearchButtonEnabled(value.length > 0);
+
+    // Clear selected journal and search results
+    setSelectedJournal(null);
+    setSearchResults([]);
+    setErrorMessage("");
   };
 
   const handleSearch = async () => {
@@ -45,14 +57,13 @@ const HomePage = () => {
       setSelectedJournal(null);
       setLoading(true);
       const response = await fetch(
-        `http://localhost:8000/journals/search?search_text=${searchText}`
+        `http://localhost:8000/journals?search_text=${searchText}`
       );
       const data = await response.json();
-      setSearchResults(data);
+      setSearchResults(data.journals);
       setLoading(false);
-      if (data.length === 0) {
+      if (data.journals.length === 0) {
         setErrorMessage("No results found.");
-        setSelectedJournal(null);
       } else {
         setErrorMessage("");
       }
@@ -84,6 +95,46 @@ const HomePage = () => {
       ...prevPagination,
       page: page,
     }));
+    fetchLatestJournals(page);
+  };
+
+  const renderPaginationButtons = () => {
+    const { page, totalPages } = pagination;
+    const paginationButtons = [];
+
+    if (page > 1) {
+      paginationButtons.push(
+        <li className="page-item" key="previous">
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(page - 1)}
+          >
+            Previous
+          </button>
+        </li>
+      );
+    }
+
+    paginationButtons.push(
+      <li className="page-item active" key={page}>
+        <span className="page-link">{page}</span>
+      </li>
+    );
+
+    if (page < totalPages) {
+      paginationButtons.push(
+        <li className="page-item" key="next">
+          <button
+            className="page-link"
+            onClick={() => handlePageChange(page + 1)}
+          >
+            Next
+          </button>
+        </li>
+      );
+    }
+
+    return paginationButtons;
   };
 
   return (
@@ -100,7 +151,7 @@ const HomePage = () => {
             isSearchButtonEnabled={isSearchButtonEnabled}
           />
 
-          {searchResults.length > 0 ? (
+          {searchResults && searchResults.length > 0 ? (
             <div>
               <h2>Search Results:</h2>
               <JournalList
@@ -127,32 +178,10 @@ const HomePage = () => {
                 onJournalClick={handleJournalClick}
                 formatDate={formatDate}
               />
-              {latestJournals.length > 0 && (
+              {latestJournals && latestJournals.length > 0 && (
                 <nav aria-label="Latest Journals Pagination" className="mt-4">
                   <ul className="pagination justify-content-center">
-                    <li
-                      className={`page-item ${
-                        pagination.page === 1 ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(pagination.page - 1)}
-                      >
-                        Previous
-                      </button>
-                    </li>
-                    <li className="page-item active">
-                      <span className="page-link">{pagination.page}</span>
-                    </li>
-                    <li className="page-item">
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(pagination.page + 1)}
-                      >
-                        Next
-                      </button>
-                    </li>
+                    {renderPaginationButtons()}
                   </ul>
                 </nav>
               )}
