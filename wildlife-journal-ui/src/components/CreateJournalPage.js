@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 
 const CreateJournalPage = () => {
@@ -78,6 +79,7 @@ const CreateJournalPage = () => {
 
   return (
     <Container className="w-50">
+      <Navbar />
       <h1>Create a Journal</h1>
 
       <Form>
