@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 
 const CreateJournalPage = () => {
@@ -8,6 +9,7 @@ const CreateJournalPage = () => {
   const [notes, setNotes] = useState("");
   const [dateError, setDateError] = useState(false);
   const [placeError, setPlaceError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
@@ -68,6 +70,10 @@ const CreateJournalPage = () => {
   const handlePlaceChange = (e) => {
     setPlace(e.target.value);
     setPlaceError(false); // Clear the place error when the user starts typing
+  };
+
+  const handleBack = () => {
+    navigate("/");
   };
 
   return (
@@ -149,9 +155,14 @@ const CreateJournalPage = () => {
           />
         </Form.Group>
 
-        <Button variant="primary" onClick={handleSubmit}>
-          Create Journal
-        </Button>
+        <div className="d-flex justify-content-between mb-3">
+          <Button variant="secondary" onClick={handleBack}>
+            Back
+          </Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Submit
+          </Button>
+        </div>
       </Form>
     </Container>
   );
