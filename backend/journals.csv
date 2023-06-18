@@ -1,16 +1,19 @@
 id,date,place,species_observed,notes
-1,2022-01-01,Forest,"{""tiger"": 3, ""elephant"": 2, ""deer"": 5}","Saw a group of elephants near the river."
-2,2022-01-02,Mountain,"{""bear"": 1, ""fox"": 2, ""rabbit"": 10}","Spotted a bear hiding in the cave."
-3,2022-01-03,Beach,"{""seagull"": 10, ""crab"": 5, ""dolphin"": 2}","Witnessed a beautiful dolphin jumping out of the water."
-4,2022-01-04,Grassland,"{""lion"": 1, ""giraffe"": 3, ""zebra"": 8}","The lions were resting under the shade of a tree."
-5,2022-01-05,Swamp,"{""crocodile"": 2, ""hippo"": 3, ""snake"": 5}","The swamp was teeming with wildlife."
-6,2022-01-06,Desert,"{""camel"": 4, ""scorpion"": 6, ""vulture"": 2}","Captured the stunning sunset over the desert."
-7,2022-01-07,Forest,"{""monkey"": 10, ""squirrel"": 8, ""bird"": 15}","Enjoyed the playful antics of the monkeys."
-8,2022-01-08,Mountain,"{""eagle"": 3, ""goat"": 5, ""sheep"": 7}","Hiked to the top of the mountain and spotted some rare birds."
-9,2022-01-09,Beach,"{""crab"": 10, ""seashell"": 20, ""seagull"": 5}","Found beautiful seashells along the shoreline."
-10,2022-01-10,Grassland,"{""gazelle"": 6, ""buffalo"": 4, ""hyena"": 2}","Observed a buffalo herd grazing peacefully."
-11,2022-01-11,Swamp,"{""alligator"": 3, ""otter"": 5, ""turtle"": 7}","The swamp was filled with diverse reptiles and amphibians."
-12,2022-01-12,Desert,"{""lizard"": 10, ""jackal"": 4, ""fennec fox"": 2}","The desert came alive with nocturnal creatures."
-13,2022-01-13,Forest,"{""deer"": 8, ""wolf"": 2, ""raccoon"": 5}","Caught a glimpse of a wolf in the dense forest."
-14,2022-01-14,Mountain,"{""mountain goat"": 6, ""chamois"": 4, ""marmot"": 3}","Spotted a group of mountain goats climbing steep cliffs."
-15,2022-01-15,Beach,"{""pelican"": 3, ""seashell"": 10, ""crab"": 8}","Witnessed a flock of pelicans diving for fish."
+1,2023-06-12,Pabe Ghat,"{'purple sunbird': 2, 'squirrel': 3}",A beautiful day at Pabe ghat.
+2,2023-06-13,Garden,"{'parrot': 4, 'rabbit': 1}",Enjoyed the peaceful surroundings.
+3,2023-06-14,Forest,"{'deer': 2, 'monkey': 5}",Spotted some rare bird species.
+4,2023-06-15,Lake,"{'swan': 3, 'fish': 6}",Witnessed a stunning sunset.
+5,2023-06-16,Mountain,"{'eagle': 1, 'fox': 2}",Hiked to the summit and had breathtaking views.
+6,2023-06-17,Beach,"{'seagull': 5, 'crab': 4}",Collected seashells along the shoreline.
+7,2023-06-18,Park,"{'peacock': 2, 'squirrel': 1}",Enjoyed a picnic with family and friends.
+8,2023-06-19,Garden,"{'butterfly': 3, 'rabbit': 2}",Relaxed amidst the colorful flowers.
+9,2023-06-20,Forest,"{'toucan': 1, 'squirrel': 2}",Explored different trails and spotted wildlife.
+10,2023-06-21,Lake,"{'swan': 2, 'duck': 4}",Went boating and observed waterfowl.
+11,2023-06-22,Mountain,"{'mountain goat': 3, 'chipmunk': 1}",Conquered a challenging hiking trail.
+12,2023-06-23,Beach,"{'seagull': 4, 'crab': 3}",Built sandcastles and enjoyed the ocean breeze.
+13,2023-06-24,Park,"{'squirrel': 2, 'pigeon': 5}",Took a leisurely stroll and fed the birds.
+14,2023-06-25,Garden,"{'hummingbird': 1, 'butterfly': 3}",Relished the tranquility of the garden.
+15,2023-06-26,Forest,"{'deer': 3, 'owl': 2}",Immersed in the peacefulness of nature.
+16,2023-06-12,Park,"{'bird': 5, 'leopard': 3}",A beautiful day at the park.
+17,2023-06-15,ARAI hills,"{'rufous treepie': 2, 'white-throated kingfisher': 1}",
+18,2023-06-15,ARAI hills,"{'rufous treepie': 2, 'white-throated kingfisher': 1}",
