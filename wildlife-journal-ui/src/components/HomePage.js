@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import SearchBar from "./SearchBar";
 import JournalList from "./JournalList";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [latestJournals, setLatestJournals] = useState([]);
@@ -114,7 +115,12 @@ const HomePage = () => {
             </div>
           ) : !loading && !errorMessage && searchText.length === 0 ? (
             <div>
-              <h2>Latest Journals</h2>
+              <h2 style={{ display: "flex", justifyContent: "space-between" }}>
+                Latest Journals
+                <Link to="/create-journal" className="btn btn-primary ml-2">
+                  +
+                </Link>
+              </h2>
               <JournalList
                 journals={latestJournals}
                 selectedJournal={selectedJournal}
