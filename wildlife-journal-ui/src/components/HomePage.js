@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import useEditJournal from "../hooks/useEditJournal";
 
 import Navbar from "./Navbar";
 import SearchBar from "./SearchBar";
@@ -14,19 +15,16 @@ const HomePage = () => {
   const [searchText, setSearchText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSearchButtonEnabled, setIsSearchButtonEnabled] = useState(false);
+
   const [pagination, setPagination] = useState({
     page: 1,
     size: 10,
     totalPages: 0, // Added totalPages state
   });
 
-  useEffect(() => {
-    fetchLatestJournals(pagination.page); // Pass the page value here
-  }, [pagination.page, pagination.size]); // Include pagination.page as a dependency
-
   const fetchLatestJournals = async (page) => {
     try {
-      const url = `http://localhost:8000/journals?page=${page}&size=${pagination.size}`;
+      let url = `http://localhost:8000/journals?page=${page}&size=${pagination.size}`;
       if (searchText) {
         url += `&search_text=${searchText}`;
       }
@@ -42,6 +40,17 @@ const HomePage = () => {
       console.log("Error fetching latest journals:", error);
     }
   };
+
+  useEffect(() => {
+    fetchLatestJournals(pagination.page);
+  }, [pagination.page, pagination.size]);
+
+  const handleEdit = useEditJournal(
+    selectedJournal,
+    fetchLatestJournals,
+    pagination,
+    setSelectedJournal
+  );
 
   const handleSearchTextChange = (e) => {
     const value = e.target.value;
@@ -98,6 +107,31 @@ const HomePage = () => {
       page: page,
     }));
     fetchLatestJournals(page);
+  };
+
+  const handleDelete = (journal) => {
+    try {
+      // Display a confirmation dialog/modal to confirm the deletion
+      // If confirmed, make a DELETE request to the backend API to delete the journal
+      if (window.confirm("Are you sure you want to delete this journal?")) {
+        fetch(`http://localhost:8000/journals?journal_id=${journal.id}`, {
+          method: "DELETE",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Handle the response from the backend
+            console.log("Deleted journal:", data);
+            // Clear the selected journal and fetch the latest journals
+            setSelectedJournal(null);
+            fetchLatestJournals(pagination.page);
+          })
+          .catch((error) => {
+            console.log("Error deleting journal:", error);
+          });
+      }
+    } catch (error) {
+      console.log("Error deleting journal:", error);
+    }
   };
 
   const renderPaginationButtons = () => {
@@ -196,6 +230,8 @@ const HomePage = () => {
             <SelectedJournal
               selectedJournal={selectedJournal}
               formatDate={formatDate}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
             />
           )}
         </div>
