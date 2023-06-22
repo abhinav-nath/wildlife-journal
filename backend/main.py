@@ -47,6 +47,7 @@ class JournalUpdate(BaseModel):
 @app.get("/journals")
 def get_journals(page: int = Query(1, gt=0), size: int = Query(10, gt=0, le=100), search_text: Optional[str] = Query(None, alias="search_text")):
     print("inside get_journals endpoint")
+
     db = SessionLocal()
     start_index = (page - 1) * size
     end_index = start_index + size
@@ -90,7 +91,8 @@ def get_journals(page: int = Query(1, gt=0), size: int = Query(10, gt=0, le=100)
 
 @app.get("/journals/{journal_id}")
 def get_journal(journal_id: int = Path(..., title="Journal ID")):
-    print("inside get_journal endpoint")
+    print("inside get_journal endpoint with journal_id: ", journal_id)
+
     db = SessionLocal()
     journal = db.query(Journal).filter(Journal.id == journal_id).first()
     db.close()
@@ -103,6 +105,8 @@ def get_journal(journal_id: int = Path(..., title="Journal ID")):
 
 @app.post("/journals")
 def create_journal(journal: JournalCreate):
+    print("inside create_journal endpoint")
+
     db = SessionLocal()
     new_journal = Journal(
         date=journal.date,
@@ -120,6 +124,8 @@ def create_journal(journal: JournalCreate):
 
 @app.put("/journals/{journal_id}")
 def update_journal(journal_id: int, updated_journal: JournalUpdate):
+    print("inside update_journal endpoint with journal_id: ", journal_id)
+
     db = SessionLocal()
     journal = db.query(Journal).filter(Journal.id == journal_id).first()
 
@@ -158,6 +164,8 @@ def delete_journal(journal_id: Optional[int] = Query(None, title="Journal ID")):
 
 @app.post("/import")
 def import_from_csv():
+    print("inside import_from_csv endpoint")
+
     db = SessionLocal()
 
     # Define the CSV file path
@@ -199,6 +207,8 @@ def import_from_csv():
 
 @app.get("/export")
 def export_to_csv():
+    print("inside export_to_csv endpoint")
+
     db = SessionLocal()
     journals = db.query(Journal).all()
     db.close()
