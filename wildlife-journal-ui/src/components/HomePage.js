@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+
 import Navbar from "./Navbar";
 import SearchBar from "./SearchBar";
 import JournalList from "./JournalList";
-import { Link } from "react-router-dom";
+import SelectedJournal from "./SelectedJournal";
 
 const HomePage = () => {
   const [latestJournals, setLatestJournals] = useState([]);
@@ -191,30 +193,10 @@ const HomePage = () => {
 
         <div className="col-md-4">
           {selectedJournal && (
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">Selected Journal:</h5>
-                <div>
-                  <p>Date: {formatDate(selectedJournal.date)}</p>
-                  <p>Place: {selectedJournal.place}</p>
-                  {selectedJournal.species_observed && (
-                    <div>
-                      <h5>Species Observed:</h5>
-                      {Object.keys(selectedJournal.species_observed).map(
-                        (species) => (
-                          <p key={species}>
-                            {species}:{" "}
-                            {selectedJournal.species_observed[species]}
-                          </p>
-                        )
-                      )}
-                    </div>
-                  )}
-                  <h4>Notes:</h4>
-                  <p>{selectedJournal.notes}</p>
-                </div>
-              </div>
-            </div>
+            <SelectedJournal
+              selectedJournal={selectedJournal}
+              formatDate={formatDate}
+            />
           )}
         </div>
       </div>
