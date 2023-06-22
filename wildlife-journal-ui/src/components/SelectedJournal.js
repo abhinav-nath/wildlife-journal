@@ -65,7 +65,7 @@ const SelectedJournal = ({
   };
 
   const renderEditMode = () => (
-    <div className="card">
+    <div className="card" style={{ width: "450px" }}>
       <form onSubmit={handleSubmit}>
         <div className="card-header d-flex justify-content-between align-items-center">
           <input
@@ -84,24 +84,27 @@ const SelectedJournal = ({
         <div className="card-body">
           <h5>Species Observed:</h5>
           {Object.keys(formState.species_observed).map((species) => (
-            <div key={species}>
+            <div key={species} className="d-flex mb-2">
               <input
                 type="text"
                 name={`species_observed.${species}.name`}
                 value={formState.species_observed[species].name}
                 onChange={(event) => handleSpeciesInputChange(event, species)}
+                style={{ marginRight: "8px" }}
               />
               <input
                 type="text"
                 name={`species_observed.${species}.value`}
                 value={formState.species_observed[species].value}
                 onChange={(event) => handleSpeciesInputChange(event, species)}
+                style={{ marginRight: "8px" }}
               />
               <button
-                className="btn btn-danger"
+                className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteSpecies(species)}
+                style={{ marginLeft: "8px" }}
               >
-                Delete
+                x
               </button>
             </div>
           ))}
