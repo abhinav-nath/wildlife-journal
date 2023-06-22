@@ -1,2 +1,3 @@
 .DS_Store
 journals.db
+backend/*.csv
