@@ -19,7 +19,7 @@ const HomePage = () => {
   const [pagination, setPagination] = useState({
     page: 1,
     size: 10,
-    totalPages: 0, // Added totalPages state
+    totalPages: 0,
   });
 
   const fetchLatestJournals = async (page) => {
@@ -56,8 +56,6 @@ const HomePage = () => {
     const value = e.target.value;
     setSearchText(value);
     setIsSearchButtonEnabled(value.length > 0);
-
-    // Clear selected journal and search results
     setSelectedJournal(null);
     setSearchResults([]);
     setErrorMessage("");
@@ -73,11 +71,7 @@ const HomePage = () => {
       const data = await response.json();
       setSearchResults(data.journals);
       setLoading(false);
-      if (data.journals.length === 0) {
-        setErrorMessage("No results found.");
-      } else {
-        setErrorMessage("");
-      }
+      setErrorMessage(data.journals.length === 0 ? "No results found." : "");
     } catch (error) {
       console.log("Error searching journals:", error);
     }
@@ -109,25 +103,19 @@ const HomePage = () => {
     fetchLatestJournals(page);
   };
 
-  const handleDelete = (journal) => {
+  const handleDelete = async (journal) => {
     try {
-      // Display a confirmation dialog/modal to confirm the deletion
-      // If confirmed, make a DELETE request to the backend API to delete the journal
       if (window.confirm("Are you sure you want to delete this journal?")) {
-        fetch(`http://localhost:8000/journals?journal_id=${journal.id}`, {
-          method: "DELETE",
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            // Handle the response from the backend
-            console.log("Deleted journal:", data);
-            // Clear the selected journal and fetch the latest journals
-            setSelectedJournal(null);
-            fetchLatestJournals(pagination.page);
-          })
-          .catch((error) => {
-            console.log("Error deleting journal:", error);
-          });
+        const response = await fetch(
+          `http://localhost:8000/journals?journal_id=${journal.id}`,
+          {
+            method: "DELETE",
+          }
+        );
+        const data = await response.json();
+        console.log("Deleted journal:", data);
+        setSelectedJournal(null);
+        fetchLatestJournals(pagination.page);
       }
     } catch (error) {
       console.log("Error deleting journal:", error);
@@ -173,10 +161,50 @@ const HomePage = () => {
     return paginationButtons;
   };
 
+  const renderSearchResults = () => {
+    return (
+      <>
+        <h2>Search Results:</h2>
+        <JournalList
+          journals={searchResults}
+          selectedJournal={selectedJournal}
+          onJournalClick={handleJournalClick}
+          formatDate={formatDate}
+        />
+        {errorMessage && <p className="alert alert-danger">{errorMessage}</p>}
+      </>
+    );
+  };
+
+  const renderLatestJournals = () => {
+    return (
+      <>
+        <h2 style={{ display: "flex", justifyContent: "space-between" }}>
+          Latest Journals
+          <Link to="/create-journal" className="btn btn-primary ml-2">
+            +
+          </Link>
+        </h2>
+        <JournalList
+          journals={latestJournals}
+          selectedJournal={selectedJournal}
+          onJournalClick={handleJournalClick}
+          formatDate={formatDate}
+        />
+        {latestJournals.length > 0 && (
+          <nav aria-label="Latest Journals Pagination" className="mt-4">
+            <ul className="pagination justify-content-center">
+              {renderPaginationButtons()}
+            </ul>
+          </nav>
+        )}
+      </>
+    );
+  };
+
   return (
     <div className="container py-4">
       <Navbar />
-
       <div className="row">
         <div className="col-md-8">
           <SearchBar
@@ -186,45 +214,10 @@ const HomePage = () => {
             onClear={clearSelectedJournal}
             isSearchButtonEnabled={isSearchButtonEnabled}
           />
-
-          {searchResults && searchResults.length > 0 ? (
-            <div>
-              <h2>Search Results:</h2>
-              <JournalList
-                journals={searchResults}
-                selectedJournal={selectedJournal}
-                onJournalClick={handleJournalClick}
-                formatDate={formatDate}
-              />
-              {errorMessage && (
-                <p className="alert alert-danger">{errorMessage}</p>
-              )}
-            </div>
-          ) : !loading && !errorMessage && searchText.length === 0 ? (
-            <div>
-              <h2 style={{ display: "flex", justifyContent: "space-between" }}>
-                Latest Journals
-                <Link to="/create-journal" className="btn btn-primary ml-2">
-                  +
-                </Link>
-              </h2>
-              <JournalList
-                journals={latestJournals}
-                selectedJournal={selectedJournal}
-                onJournalClick={handleJournalClick}
-                formatDate={formatDate}
-              />
-              {latestJournals && latestJournals.length > 0 && (
-                <nav aria-label="Latest Journals Pagination" className="mt-4">
-                  <ul className="pagination justify-content-center">
-                    {renderPaginationButtons()}
-                  </ul>
-                </nav>
-              )}
-            </div>
-          ) : null}
+          {searchResults.length > 0
+            ? renderSearchResults()
+            : !loading && searchText.length === 0 && renderLatestJournals()}
         </div>
-
         <div className="col-md-4">
           {selectedJournal && (
             <SelectedJournal
