@@ -23,9 +23,13 @@ const HomePage = () => {
     totalPages: 0,
   });
 
-  const fetchLatestJournals = async (page) => {
+  useEffect(() => {
+    fetchLatestJournals();
+  }, [pagination.page, pagination.size, searchText]);
+
+  const fetchLatestJournals = async () => {
     try {
-      let url = `http://localhost:8000/journals?page=${page}&size=${pagination.size}`;
+      let url = `http://localhost:8000/journals?page=${pagination.page}&size=${pagination.size}`;
       if (searchText) {
         url += `&search_text=${searchText}`;
       }
@@ -41,10 +45,6 @@ const HomePage = () => {
       console.log("Error fetching latest journals:", error);
     }
   };
-
-  useEffect(() => {
-    fetchLatestJournals(pagination.page);
-  }, [pagination.page, pagination.size]);
 
   const handleEdit = useEditJournal(
     selectedJournal,
@@ -102,7 +102,6 @@ const HomePage = () => {
       ...prevPagination,
       page: page,
     }));
-    fetchLatestJournals(page);
   };
 
   const handleDelete = async (journal) => {
@@ -117,7 +116,7 @@ const HomePage = () => {
         const data = await response.json();
         console.log("Deleted journal:", data);
         setSelectedJournal(null);
-        fetchLatestJournals(pagination.page);
+        fetchLatestJournals();
       }
     } catch (error) {
       console.log("Error deleting journal:", error);
