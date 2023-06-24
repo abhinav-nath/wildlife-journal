@@ -1,4 +1,3 @@
-
 const useEditJournal = (
   journal,
   fetchLatestJournals,

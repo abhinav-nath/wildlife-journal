@@ -50,10 +50,10 @@ const SelectedJournal = ({
         <div>
           <h5>Species Observed:</h5>
           {Object.entries(selectedJournal.species_observed).map(
-            ([species, values]) => (
+            ([species, count]) => (
               <div key={species}>
                 <p>
-                  {species}: {values}
+                  {species}: {count}
                 </p>
               </div>
             )
@@ -65,6 +65,7 @@ const SelectedJournal = ({
   };
 
   const renderEditMode = () => (
+    console.log("species_observed", formState.species_observed),
     <div className="card" style={{ width: "450px" }}>
       <form onSubmit={handleSubmit}>
         <div className="card-header d-flex justify-content-between align-items-center">
@@ -83,20 +84,21 @@ const SelectedJournal = ({
         </div>
         <div className="card-body">
           <h5>Species Observed:</h5>
-          {Object.keys(formState.species_observed).map((species) => (
+          {Object.entries(formState.species_observed).map(([species, count]) => (
+            console.log(species, count),
             <div key={species} className="d-flex mb-2">
               <input
                 type="text"
-                name={`species_observed.${species}.name`}
-                value={formState.species_observed[species].name}
+                name={species}
+                value={species}
                 onChange={(event) => handleSpeciesInputChange(event, species)}
                 style={{ marginRight: "8px" }}
               />
               <input
                 type="text"
-                name={`species_observed.${species}.value`}
-                value={formState.species_observed[species].value}
-                onChange={(event) => handleSpeciesInputChange(event, species)}
+                name={count}
+                value={count}
+                onChange={(event) => handleSpeciesInputChange(event, count)}
                 style={{ marginRight: "8px" }}
               />
               <button
