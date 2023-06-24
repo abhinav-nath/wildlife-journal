@@ -124,6 +124,7 @@ def get_journal(journal_id: int = Path(..., title="Journal ID")):
 @app.post("/journals")
 def create_journal(journal: JournalCreate):
     """Create a new journal."""
+    print("inside create_journal endpoint with journal:", journal)
     with session_scope() as session:
         db_journal = Journal(**journal.dict())
         session.add(db_journal)
@@ -135,7 +136,12 @@ def create_journal(journal: JournalCreate):
 @app.put("/journals/{journal_id}")
 def update_journal(journal_id: int, journal: JournalUpdate):
     """Update a journal."""
-    print("inside update_journal endpoint with journal_id:", journal_id)
+    print(
+        "inside update_journal endpoint with journal_id:",
+        journal_id,
+        "and journal:",
+        journal,
+    )
     with session_scope() as session:
         db_journal = session.query(Journal).filter(Journal.id == journal_id).first()
         if db_journal is None:
