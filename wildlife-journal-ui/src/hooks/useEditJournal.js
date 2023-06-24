@@ -4,15 +4,15 @@ const useEditJournal = (
   pagination,
   setSelectedJournal
 ) => {
-  const handleEdit = () => {
+  const handleEdit = (updatedJournal) => {
     try {
       // Send a PUT request to the backend API to update the journal
-      fetch(`http://localhost:8000/journals/${journal.id}`, {
+      fetch(`http://localhost:8000/journals/${updatedJournal.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(journal),
+        body: JSON.stringify(updatedJournal),
       })
         .then((response) => response.json())
         .then((data) => {
