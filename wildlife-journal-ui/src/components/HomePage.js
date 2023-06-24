@@ -106,6 +106,7 @@ const HomePage = () => {
   };
 
   const handlePageChange = (page) => {
+    setSelectedJournal(null);
     setPagination((prevPagination) => ({
       ...prevPagination,
       page: page,
