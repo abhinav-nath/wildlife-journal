@@ -78,8 +78,16 @@ const HomePage = () => {
     }
   };
 
-  const handleJournalClick = (journal) => {
-    setSelectedJournal(journal);
+  const handleJournalClick = async (journal) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/journals/${journal.id}`
+      );
+      const data = await response.json();
+      setSelectedJournal(data);
+    } catch (error) {
+      console.log("Error fetching journal:", error);
+    }
     setEditMode(false);
   };
 

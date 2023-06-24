@@ -13,7 +13,8 @@ const JournalList = ({
           <li
             key={journal.id}
             className={`list-group-item ${
-              selectedJournal === journal ? "active" : ""
+              selectedJournal && 
+              selectedJournal.id === journal.id ? "active" : ""
             }`}
             onClick={() => onJournalClick(journal)}
             style={{ cursor: "pointer" }}
