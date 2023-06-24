@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException, Path, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from sqlalchemy import func, or_
+from sqlalchemy import desc, func, or_
 
 from database import Journal, SessionLocal, create_tables
 
@@ -72,34 +72,20 @@ def get_journals(
     start_index = (page - 1) * size
     end_index = start_index + size
 
+    query = db.query(Journal)
+
     if search_text:
-        matching_journals = (
-            db.query(Journal)
-            .filter(
-                or_(
-                    func.lower(Journal.place).like(f"%{search_text}%"),
-                    func.lower(Journal.notes).like(f"%{search_text}%"),
-                    func.lower(Journal.species_observed).like(f"%{search_text}%"),
-                )
+        query = query.filter(
+            or_(
+                func.lower(Journal.place).like(f"%{search_text}%"),
+                func.lower(Journal.notes).like(f"%{search_text}%"),
+                func.lower(Journal.species_observed).like(f"%{search_text}%"),
             )
-            .offset(start_index)
-            .limit(size)
-            .all()
         )
-        total_count = (
-            db.query(func.count(Journal.id))
-            .filter(
-                or_(
-                    func.lower(Journal.place).like(f"%{search_text}%"),
-                    func.lower(Journal.notes).like(f"%{search_text}%"),
-                    func.lower(Journal.species_observed).like(f"%{search_text}%"),
-                )
-            )
-            .scalar()
-        )
-    else:
-        matching_journals = db.query(Journal).offset(start_index).limit(size).all()
-        total_count = db.query(func.count(Journal.id)).scalar()
+
+    query = query.order_by(desc(Journal.date))
+    matching_journals = query.offset(start_index).limit(size).all()
+    total_count = query.count()
 
     db.close()
 
