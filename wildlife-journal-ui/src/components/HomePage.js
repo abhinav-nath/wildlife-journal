@@ -15,6 +15,7 @@ const HomePage = () => {
   const [searchText, setSearchText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSearchButtonEnabled, setIsSearchButtonEnabled] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -79,6 +80,7 @@ const HomePage = () => {
 
   const handleJournalClick = (journal) => {
     setSelectedJournal(journal);
+    setEditMode(false);
   };
 
   const formatDate = (dateString) => {
@@ -225,6 +227,8 @@ const HomePage = () => {
               formatDate={formatDate}
               handleEdit={handleEdit}
               handleDelete={handleDelete}
+              editMode={editMode}
+              setEditMode={setEditMode}
             />
           )}
         </div>

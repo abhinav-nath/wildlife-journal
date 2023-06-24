@@ -6,11 +6,11 @@ const SelectedJournal = ({
   formatDate,
   handleDelete,
   handleEdit,
+  editMode,
+  setEditMode,
 }) => {
   const { formState, setFormState, handleInputChange, handleSubmit } =
     useEditForm(selectedJournal, handleEdit);
-
-  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     // Set initial values for species observed when entering edit mode
@@ -66,70 +66,80 @@ const SelectedJournal = ({
 
   const renderEditMode = () => (
     console.log("species_observed", formState.species_observed),
-    <div className="card" style={{ width: "450px" }}>
-      <form onSubmit={handleSubmit}>
-        <div className="card-header d-flex justify-content-between align-items-center">
-          <input
-            type="text"
-            name="place"
-            value={formState.place}
-            onChange={handleInputChange}
-          />
-          <input
-            type="text"
-            name="date"
-            value={formState.date}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="card-body">
-          <h5>Species Observed:</h5>
-          {Object.entries(formState.species_observed).map(([species, count]) => (
-            console.log(species, count),
-            <div key={species} className="d-flex mb-2">
-              <input
-                type="text"
-                name={species}
-                value={species}
-                onChange={(event) => handleSpeciesInputChange(event, species)}
-                style={{ marginRight: "8px" }}
-              />
-              <input
-                type="text"
-                name={count}
-                value={count}
-                onChange={(event) => handleSpeciesInputChange(event, count)}
-                style={{ marginRight: "8px" }}
-              />
+    (
+      <div className="card" style={{ width: "450px" }}>
+        <form onSubmit={handleSubmit}>
+          <div className="card-header d-flex justify-content-between align-items-center">
+            <input
+              type="text"
+              name="place"
+              value={formState.place}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="date"
+              value={formState.date}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="card-body">
+            <h5>Species Observed:</h5>
+            {Object.entries(formState.species_observed).map(
+              ([species, count]) => (
+                console.log(species, count),
+                (
+                  <div key={species} className="d-flex mb-2">
+                    <input
+                      type="text"
+                      name={species}
+                      value={species}
+                      onChange={(event) =>
+                        handleSpeciesInputChange(event, species)
+                      }
+                      style={{ marginRight: "8px" }}
+                    />
+                    <input
+                      type="text"
+                      name={count}
+                      value={count}
+                      onChange={(event) =>
+                        handleSpeciesInputChange(event, count)
+                      }
+                      style={{ marginRight: "8px" }}
+                    />
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDeleteSpecies(species)}
+                      style={{ marginLeft: "8px" }}
+                    >
+                      x
+                    </button>
+                  </div>
+                )
+              )
+            )}
+            <h5>Notes:</h5>
+            <textarea
+              name="notes"
+              value={formState.notes}
+              onChange={handleInputChange}
+            ></textarea>
+            <div className="d-flex justify-content-between">
+              <button type="submit" className="btn btn-primary">
+                Save
+              </button>
               <button
-                className="btn btn-sm btn-danger"
-                onClick={() => handleDeleteSpecies(species)}
-                style={{ marginLeft: "8px" }}
+                className="btn btn-danger"
+                onClick={() => setEditMode(false)}
               >
-                x
+                Cancel
               </button>
             </div>
-          ))}
-          <h5>Notes:</h5>
-          <textarea
-            name="notes"
-            value={formState.notes}
-            onChange={handleInputChange}
-          ></textarea>
-          <div className="d-flex justify-content-between">
-            <button type="submit" className="btn btn-primary">
-              Save
-            </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => setEditMode(false)}
-            >
-              Cancel
-            </button>
           </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    )
   );
 
   const renderViewMode = () => (
