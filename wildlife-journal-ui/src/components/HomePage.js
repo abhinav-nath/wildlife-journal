@@ -19,7 +19,7 @@ const HomePage = () => {
 
   const [pagination, setPagination] = useState({
     page: 1,
-    size: 10,
+    size: 6,
     totalPages: 0,
   });
 
