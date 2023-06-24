@@ -107,7 +107,7 @@ const HomePage = () => {
     try {
       if (window.confirm("Are you sure you want to delete this journal?")) {
         const response = await fetch(
-          `http://localhost:8000/journals?journal_id=${journal.id}`,
+          `http://localhost:8000/journals/${journal.id}`,
           {
             method: "DELETE",
           }
